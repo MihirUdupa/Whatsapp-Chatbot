@@ -22,10 +22,6 @@ function initialize() {
     app.post('/chatbot/userInput', function(req, res) {
         handelGetUserInput(req, res);
     })
-
-    app.post('/chatbot/getResponseFromBot', function(req, res) {
-        handelSendToUser(req, res);
-    })
 }
 
 app.listen(3400,function(){
@@ -61,8 +57,6 @@ function handelGetUserInput(req, res) {
             let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
             let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body;
             let data = {
-                'Phone_id': phone_number_id,
-                'From': from,
                 'message' : msg_body
             }
             axios({
@@ -73,14 +67,27 @@ function handelGetUserInput(req, res) {
                 },
                 data : data
             }).then((result) => {
-                console.log(result)
+                console.log(result.data.result)
+                if(result.data.result) {
+                    axios({
+                        method: 'post',
+                        url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        data : {
+                            messaging_product: "whatsapp",
+                            to: from,
+                            text: { body: result.data.result },
+                        }
+                    })
+                }
             }).catch((err) => {
-                console.log(err)
+                console.log(err);
             })
-        }
+        } 
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(404);
     }
-}
-
-function handelSendToUser(req, res) {
-    let body = req.body
 }
