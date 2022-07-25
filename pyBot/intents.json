@@ -73,13 +73,9 @@
             ]
         },
         {
-            "tag": "options",
+            "tag": "help",
             "patterns": [
-                "How you could help me?",
-                "What you can do?",
-                "What help you provide?",
-                "How you can be helpful?",
-                "What support is offered"
+                "/help"
             ],
             "responses": [
                 "I am a general purpose chatbot. My capabilities are : \n 1. I can chat with you. Try asking me for jokes or riddles! \n 2. Ask me the date and time \n 3. I can google search for you. Use format google: your query \n 4. I can get the present weather for any city. Use format weather: city name \n 5. I can get you the top 10 trending news in India. Use keywords 'Latest News' \n 6. I can get you the top 10 trending songs globally. Type 'songs' \n 7. I can set a timer for you. Enter 'set a timer: minutes to timer' \n 8. I can get the present Covid stats for any country. Use 'covid 19: world' or 'covid 19: country name' \n For suggestions to help me improve, send an email to ted.thedlbot.suggestions@gmail.com . Thank you!! "
@@ -239,7 +235,7 @@
                 "scooter lost",
                 "bluetooth not working"
             ],
-            "responses":[
+            "responses": [
                 "Try turning off and on again",
                 "Try turning off and turning on the bluetooth again",
                 "Try re-connecting",
@@ -251,7 +247,7 @@
             "tag": "payment_help",
             "patterns": [
                 "Card not accepted",
-                "Payment help"
+                "Payment not being accepted"
             ],
             "responses": [
                 "check if the card used is VISA or not",
@@ -280,13 +276,13 @@
         },
         {
             "tag": "answerNo",
-            "patterns":[
+            "patterns": [
                 "no",
                 "nope",
                 "nah",
                 "nuh uh"
             ],
-            "responses":[
+            "responses": [
                 "will raise the ticket and support people handel this..."
             ]
         }
