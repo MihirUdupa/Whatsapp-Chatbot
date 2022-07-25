@@ -68,86 +68,56 @@ async function handelGetUserInput(req, res) {
     //#endregion test on localhost
 
     //#region ActualMessage
-    let Bot_Response
-    let Help_Response
     if(body.object) {
+        let helpMessage = {
+            'message' : "/help"
+        }
         if(body.entry && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages[0]) {
             let phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
             let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
             let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body;
-
             let data = {
-                "message" : msg_body
+                'message' : msg_body
             }
 
-            let helpMessage = {
-                'message' : "/help"
-            }
-
-            if(msg_body === "hi" || msg_body === 'Hi') {
-                Bot_Response = sendToBot(data);
-                sendToWhatsapp(Bot_Response,from,phone_number_id)
-                await sleep(2000)
-                Help_Response = sendToBot(helpMessage)
-                sendToWhatsapp(Help_Response,from,phone_number_id)
-            } else {
-                Bot_Response = sendToBot(data)
-                sendToWhatsapp(Bot_Response,from,phone_number_id)
+            axios({
+                method: 'post',
+                url : process.env.URL,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data : data.message
+            }).then((result) => {
+                console.log(result.data.result)
+                if(result.data.result) {
+                    axios({
+                        method: 'post',
+                        url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data : {
+                            messaging_product: "whatsapp",
+                            to: from,
+                            text: { body: result.data.result },
+                        }
+                    }).catch(err => {
+                        console.log(err.response)
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+            
+            if(msg_body === 'Hi' || msg_body === 'hi') {
+                sendToBot(helpMessage)
             }
         }
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(404);
     }
     //#endregion ActualMessage
-
-    // if(body.object) {
-    //     if(body.entry && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages[0]) {
-    //         let phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
-    //         let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
-    //         let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body;
-    //         let data = {
-    //             'message' : msg_body
-    //         }
-
-    //         let helpMessage = {
-    //             'message' : "/help"
-    //         }
-
-    //         if(message.body === 'hi' || 'Hi') {
-    //             sendToBot(data);
-    //             sendToBot(helpMessage)
-    //         }
-    //         // axios({
-    //         //     method: 'post',
-    //         //     url : process.env.URL,
-    //         //     headers: {
-    //         //         'Content-Type': 'application/json'
-    //         //     },
-    //         //     data : data.message
-    //         // }).then((result) => {
-    //         //     console.log(result.data.result)
-    //         //     // if(result.data.result) {
-    //         //     //     axios({
-    //         //     //         method: 'post',
-    //         //     //         url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
-    //         //     //         headers: {
-    //         //     //             'Content-Type': 'application/json'
-    //         //     //         },
-    //         //     //         data : {
-    //         //     //             messaging_product: "whatsapp",
-    //         //     //             to: from,
-    //         //     //             text: { body: result.data.result },
-    //         //     //         }
-    //         //     //     }).catch(err => {
-    //         //     //        console.log(err.response)
-    //         //     //     })
-    //         //     // }
-    //         // }).catch((err) => {
-    //         //     console.log(err);
-    //         // })
-    //     }
-    //     res.sendStatus(200);
-    // } else {
-    //     res.sendStatus(404);
-    // }
 }
 
 function sendToBot(data) {
@@ -161,7 +131,6 @@ function sendToBot(data) {
     }
 
     return axios(config).then((result) => {
-        // console.log(result.data.result)
         return result.data.result
     }).catch((err) => {
         console.log(err)
