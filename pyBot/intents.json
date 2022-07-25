@@ -3,15 +3,7 @@
         {
             "tag": "Introduction",
             "patterns": [
-                "Hi there",
-                "How are you",
-                "Is anyone there?",
-                "Hey",
-                "Hola",
-                "Hello",
-                "Good day",
-                "Namaste",
-                "yo"
+                "Hi"
             ],
             "responses": [
                 "Hello \n My name is Morphius, How can i help you today",
@@ -73,12 +65,13 @@
             ]
         },
         {
-            "tag": "help",
+            "tag": "options",
             "patterns": [
-                "/help"
+               "/help",
+               "View all options"
             ],
             "responses": [
-                "I am a general purpose chatbot. My capabilities are : \n 1. I can chat with you. Try asking me for jokes or riddles! \n 2. Ask me the date and time \n 3. I can google search for you. Use format google: your query \n 4. I can get the present weather for any city. Use format weather: city name \n 5. I can get you the top 10 trending news in India. Use keywords 'Latest News' \n 6. I can get you the top 10 trending songs globally. Type 'songs' \n 7. I can set a timer for you. Enter 'set a timer: minutes to timer' \n 8. I can get the present Covid stats for any country. Use 'covid 19: world' or 'covid 19: country name' \n For suggestions to help me improve, send an email to ted.thedlbot.suggestions@gmail.com . Thank you!! "
+                "Here are the options\n1.Configuring the Jar\n2.Check the order Status\n3.Queries regarding Refunds/Payments\n4.Queries regarding Jar Status\n5.Track your order\n6.Queries regarding delivery"
             ],
             "context": [
                 ""
@@ -95,98 +88,62 @@
             ]
         },
         {
-            "tag": "datetime",
-            "patterns": [
-                "What is the time",
-                "what is the date",
-                "date",
-                "time",
-                "tell me the date",
-                "day",
-                "what day is is today"
+            "tag":"Positive_Response",
+            "patterns":[
+                "i loved it!",
+                "nice product.",
+                "best product",
+                "worth buying the product",
+                "product quality is amazing"
             ],
-            "responses": [
-                "Date and Time"
+            "responses":[
+                "Thank you for your purchase!It would be a great help if you provide a review for our product and rate it"
             ]
         },
         {
-            "tag": "whatsup",
-            "patterns": [
-                "Whats up",
-                "Wazzup",
-                "How are you",
-                "sup",
-                "How you doing"
+            "tag":"Negetive_Response",
+            "patterns":[
+                "i didnt like the product!",
+                "worst product.",
+                "product quality isnt upto mark ",
+                "product is damaged"
             ],
-            "responses": [
-                "All good..What about you?"
+            "responses":[
+                "We are sorry for your inconvinence.You can replace or return the product"
             ]
         },
         {
-            "tag": "insult",
-            "patterns": [
-                "you are dumb",
-                "shut up",
-                "idiot"
+            "tag":"product_query",
+            "patterns":[
+                "does this product have any warrenty",
+                "is the product portable",
+                "how much capacity it can hold upto"
             ],
-            "responses": [
-                "Well that hurts :("
+            "responses":[
+                "kindly check the Product Discription"
             ]
         },
         {
-            "tag": "activity",
+            "tag": "payment_unsuccessfull",
             "patterns": [
-                "what are you doing",
-                "what are you upto"
+                "payment was unsussessfull",
+                "payment got cancelled",
+                "couldnt pay the amount",
+                "card wasnot accepted"
             ],
             "responses": [
-                "Talking to you, of course!"
+                "check your account details and try again",
+                "Sorry for the inconvinence.try again!"
             ]
         },
         {
-            "tag": "exclaim",
-            "patterns": [
-                "Awesome",
-                "Great",
-                "I know",
-                "ok",
-                "yeah"
+            "tag":"refund_queries",
+            "patterns":[
+                "when will the refund amount be inisiated",
+                "when will i get my money back"
             ],
-            "responses": [
-                "Yeah!"
-            ]
-        },
-        {
-            "tag": "appreciate",
-            "patterns": [
-                "You are awesome",
-                "you are the best",
-                "you are great",
-                "you are good"
-            ],
-            "responses": [
-                "Thank you!"
-            ]
-        },
-        {
-            "tag": "nicetty",
-            "patterns": [
-                "it was nice talking to you",
-                "good talk"
-            ],
-            "responses": [
-                "It was nice talking to you as well! Come back soon!"
-            ]
-        },
-        {
-            "tag": "news",
-            "patterns": [
-                "news",
-                "latest news",
-                "india news"
-            ],
-            "responses": [
-                "..."
+            "responses":[
+                "You will be refunded with in 2-3 bussiness days."
             ]
         },
         {
@@ -203,58 +160,6 @@
             ]
         },
         {
-            "tag": "suggest",
-            "patterns": [
-                "you are useless",
-                "useless",
-                "suggest",
-                "suggestions",
-                "you are bad"
-            ],
-            "responses": [
-                "Please mail your suggestions to ted.thedlbot.suggestions@gmail.com. Thank you for helping me improve!"
-            ]
-        },
-        {
-            "tag": "age",
-            "patterns": [
-                "how old are you",
-                "when were you made",
-                "what is your age"
-            ],
-            "responses": [
-                "I was made in 2020, if that's what you are asking!"
-            ]
-        },
-        {
-            "tag": "scooter_help",
-            "patterns": [
-                "Scooter not starting",
-                "not starting",
-                "scooter not showing",
-                "scooter lost",
-                "bluetooth not working"
-            ],
-            "responses": [
-                "Try turning off and on again",
-                "Try turning off and turning on the bluetooth again",
-                "Try re-connecting",
-                "Check payment status",
-                "Try scaning again"
-            ]
-        },
-        {
-            "tag": "payment_help",
-            "patterns": [
-                "Card not accepted",
-                "Payment not being accepted"
-            ],
-            "responses": [
-                "check if the card used is VISA or not",
-                "We only accept VISA cards"
-            ]
-        },
-        {
             "tag": "success",
             "patterns": [
                 "Did that",
@@ -262,6 +167,29 @@
             ],
             "responses": [
                 "did the solution work ?"
+            ]
+        },
+        {
+            "tag":"product expired!",
+            "patterns":[
+                "the product is expired",
+                "expired product"
+            ],
+            "responses":[
+                "sorry for the inconvinence,you can return the product"
+            ]
+        },
+        {
+            "tag":"jar_help",
+            "patterns":[
+                "jar help",
+                "jar failture",
+                "improper reading is read in jar"
+            ],
+            "responses":[
+                "Restart the jar and check",
+                "battery might be low",
+                "shake the jar and try measuring again"
             ]
         },
         {
@@ -276,13 +204,13 @@
         },
         {
             "tag": "answerNo",
-            "patterns": [
+            "patterns":[
                 "no",
                 "nope",
                 "nah",
                 "nuh uh"
             ],
-            "responses": [
+            "responses":[
                 "will raise the ticket and support people handel this..."
             ]
         }

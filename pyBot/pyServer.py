@@ -19,7 +19,7 @@ app = Flask(__name__)
 @app.route('/CBot',methods = ['POST'])
 def mainBot():
     data = request.get_json()
-    print(data)
+    # print(data)
     result = chatbot_response(data)
 
     return json.dumps({"result":result})
