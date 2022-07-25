@@ -18,7 +18,7 @@ function initialize() {
         handelValidation(req, res);
     });
 
-    app.post('/chatbot/test', function(req, res) {
+    app.post('/chatbot/validation', function(req, res) {
         handelGetUserInput(req, res);
     })
 }
