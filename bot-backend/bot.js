@@ -7,7 +7,6 @@ const app = express()
 
 const waToken = process.env.WATOKEN;
 const verify_token = process.env.VERIFY_TOKEN;
-let Bot_Response = '';
 
 function initialize() {
     app.use(express.static('pages'));
@@ -69,16 +68,15 @@ async function handelGetUserInput(req, res) {
 
     //#region ActualMessage
     if(body.object) {
-        let helpMessage = {
-            'message' : "/help"
-        }
+        let phone_number_id = ''
+        let from = ''
+        let msg_body = ''
+        let data = {}
         if(body.entry && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages[0]) {
-            let phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
-            let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
-            let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body;
-            let data = {
-                'message' : msg_body
-            }
+            phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
+            from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
+            msg_body = req.body.entry[0].changes[0].value.messages[0].text.body;
+            data.message = msg_body
 
             axios({
                 method: 'post',
@@ -87,10 +85,10 @@ async function handelGetUserInput(req, res) {
                     'Content-Type': 'application/json'
                 },
                 data : data.message
-            }).then((result) => {
+            }).then(async (result) => {
                 console.log(result.data.result)
                 if(result.data.result) {
-                    axios({
+                    await axios({
                         method: 'post',
                         url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
                         headers: {
@@ -104,60 +102,39 @@ async function handelGetUserInput(req, res) {
                     }).catch(err => {
                         console.log(err.response)
                     })
+                    //#region displaying the options
+                    if(msg_body === 'hi' || msg_body === 'Hi') {
+                        axios({
+                            method: 'post',
+                            url : process.env.USER_URL + phone_number_id + "/messages",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer '+waToken
+                            },
+                            data: {
+                                messaging_product: "whatsapp",
+                                to: from,
+                                type: "template",
+                                template: {
+                                    name: "bot_operations",
+                                    language: {
+                                        code: "en"
+                                    }
+                                }
+                            }
+                        }).catch(err => {
+                            console.log(err)
+                        })
+                    }
+                    //#endregion displaying the options
                 }
             }).catch((err) => {
                 console.log(err);
             })
-            
-            if(msg_body === 'Hi' || msg_body === 'hi') {
-                sendToBot(helpMessage)
-            }
         }
         res.sendStatus(200);
     } else {
         res.sendStatus(404);
     }
     //#endregion ActualMessage
-}
-
-function sendToBot(data) {
-    let config = {
-        method: 'post',
-        url: process.env.URL,
-        headers: {
-            'content-Type': 'application/json'
-        },
-        data : data.message
-    }
-
-    return axios(config).then((result) => {
-        return result.data.result
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-
-function sendToWhatsapp(data,from,phone_number_id) {
-    let config = {
-        method: 'post',
-        url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data : {
-            messaging_product: "whatsapp",
-            to: from,
-            text: { body: data },
-        }
-    }
-
-    axios(config).catch(err => {
-        console.log(err)
-    })
-}
-
-function sleep(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
 }
