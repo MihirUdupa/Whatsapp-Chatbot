@@ -148,22 +148,22 @@ async function handelGetUserInput(req, res) {
 
 function switcher(messages) {
     switch(messages){
-        case 1:
+        case '1':
             return 'Jar Config';
             break;
-        case 2:
+        case '2':
             return 'Order Status';
             break;
-        case 3:
+        case '3':
             return 'Refund/Payment help';
             break;
-        case 4:
+        case '4':
             return 'Jar Status';
-        case 5:
+        case '5':
             return 'Track Order';
-        case 6:
+        case '6':
             return 'Delivery help';
-        case 7:
+        case '7':
             return 'Jar help';
         default:
             return messages;
