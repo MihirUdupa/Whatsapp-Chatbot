@@ -184,11 +184,13 @@
             "patterns":[
                 "jar help",
                 "jar failture",
-                "improper reading is read in jar"
+                "improper reading is read in jar",
+                "weight not read properly"
             ],
             "responses":[
                 "Restart the jar and check",
                 "battery might be low",
+                "Change the battery and check again",
                 "shake the jar and try measuring again"
             ]
         },
@@ -211,7 +213,7 @@
                 "nuh uh"
             ],
             "responses":[
-                "will raise the ticket and support people handel this..."
+                "will raise the ticket and let the support people handel this..."
             ]
         }
     ]

@@ -70,12 +70,20 @@ async function handelGetUserInput(req, res) {
     if(body.object) {
         let phone_number_id = ''
         let from = ''
+        let msg_body_switcher = ''
         let msg_body = ''
+        let type = ''
         let data = {}
         if(body.entry && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages[0]) {
             phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
-            from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
-            msg_body = req.body.entry[0].changes[0].value.messages[0].text.body;
+            from = req.body.entry[0].changes[0].value.messages[0].from;
+            type = req.body.entry[0].changes[0].value.messages[0].type;
+            if(type === "text") {
+                msg_body_switcher = req.body.entry[0].changes[0].value.messages[0].text.body;
+                msg_body = switcher(msg_body_switcher);
+            } else if (type === "button") {
+                msg_body = req.body.entry[0].changes[0].value.messages[0].button.text;
+            }
             data.message = msg_body
 
             axios({
@@ -86,7 +94,6 @@ async function handelGetUserInput(req, res) {
                 },
                 data : data.message
             }).then(async (result) => {
-                console.log(result.data.result)
                 if(result.data.result) {
                     await axios({
                         method: 'post',
@@ -137,4 +144,29 @@ async function handelGetUserInput(req, res) {
         res.sendStatus(404);
     }
     //#endregion ActualMessage
+}
+
+function switcher(messages) {
+    switch(messages){
+        case 1:
+            return 'Jar Config';
+            break;
+        case 2:
+            return 'Order Status';
+            break;
+        case 3:
+            return 'Refund/Payment help';
+            break;
+        case 4:
+            return 'Jar Status';
+        case 5:
+            return 'Track Order';
+        case 6:
+            return 'Delivery help';
+        case 7:
+            return 'Jar help';
+        default:
+            return messages;
+            break;
+    }
 }
