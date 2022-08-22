@@ -35,6 +35,10 @@ function initialize() {
             app.post('/chatbot/getMessage', function(req, res) {
                 handelGetAllMessages(req.body, res);
             })
+
+            app.get('/chatbot/getPhoneNumbers', function(req, res) {
+                handelGetAllNumbers(req, res);
+            })
         }
     })
 }
@@ -220,9 +224,21 @@ function handelGetAllMessages(number, res) {
     }
     collection.find(query, {projection:{_id:0}}).sort({_id:-1}).toArray().then((result) => {
         if(result.length > 0) {
-            res.json({"response_desc":"success","response_data":result,"response_code":"0"})
+            res.json({"response_desc":"Success","response_data":result,"response_code":"0"})
         } else {
-            res.json({"response_desc":"success","response_data":{},"response_code":"1"})
+            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"})
+        }
+    }).catch((err) => {
+        res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"})
+    })
+}
+
+function handelGetAllNumbers(req, res) {
+    collection.distinct("Phone_Number").then((result) => {
+        if(result.length > 0) {
+            res.json({"response_desc":"Success","response_data":result,"response_code":"0"})
+        } else {
+            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"})
         }
     }).catch((err) => {
         res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"})
