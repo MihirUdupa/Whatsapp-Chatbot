@@ -30,6 +30,7 @@ function initialize() {
         
             app.post('/chatbot/validation', function(req, res) {
                 handelGetUserInput(req, res);
+                res.sendStatus(200);
             })
         
             app.post('/chatbot/getMessage', function(req, res) {
@@ -48,7 +49,7 @@ app.listen(3400,function(){
     initialize();
 });
 
-function handelValidation(req, res) {
+async function handelValidation(req, res) {
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
     let challenge = req.query["hub.challenge"];
@@ -94,81 +95,53 @@ async function handelGetUserInput(req, res) {
         let msg_body = ''
         let type = ''
         let data = {}
+        const pattern = /Order_Id:/;
         if(body.entry && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages[0]) {
             phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
             type = req.body.entry[0].changes[0].value.messages[0].type;
+            from = req.body.entry[0].changes[0].value.messages[0].from;
             if(type === "text") {
                 let Usermessage = req.body.entry[0].changes[0].value.messages[0].text.body;
                 let Botmessage = "";
                 msg_body_switcher = req.body.entry[0].changes[0].value.messages[0].text.body;
                 let time = getCurrentTimestamp();
-                from = req.body.entry[0].changes[0].value.messages[0].from;
                 sendToDB(from, Usermessage, Botmessage,time);
                 msg_body = switcher(msg_body_switcher);
             } else if (type === "button") {
                 msg_body = req.body.entry[0].changes[0].value.messages[0].button.text;
-                from = req.body.entry[0].changes[0].value.messages[0].from;
             }
-            data.message = msg_body
 
-            axios({
-                method: 'post',
-                url : process.env.URL,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data : data.message
-            }).then(async (result) => {
-                if(result.data.result) {
-                    let Botmessage = result.data.result;
-                    let Usermessage = "";
-                    let time = getCurrentTimestamp();
-                    sendToDB(from, Usermessage, Botmessage, time);
-                    await axios({
-                        method: 'post',
-                        url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data : {
-                            messaging_product: "whatsapp",
-                            to: from,
-                            text: { body: result.data.result },
+            if(msg_body.test(pattern)) {
+                raiseTicket(msg_body, phone_number_id, from)
+                return
+            } else {
+                data.message = msg_body
+                await axios({
+                    method: 'post',
+                    url : process.env.URL,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data : data.message
+                }).then(async (result) => {
+                    if(result.data.result) {
+                        let Botmessage = result.data.result;
+                        let Usermessage = "";
+                        let time = getCurrentTimestamp();
+                        sendToDB(from, Usermessage, Botmessage, time);
+                        await sendToWhatsApp(result.data.result, phone_number_id, from)
+                        //#region displaying the options
+                        if(msg_body === 'hi' || msg_body === 'Hi') {
+                            await sendTemplate(phone_number_id, from)
                         }
-                    }).catch(err => {
-                        console.log(err.response)
-                    })
-                    //#region displaying the options
-                    if(msg_body === 'hi' || msg_body === 'Hi') {
-                        axios({
-                            method: 'post',
-                            url : process.env.USER_URL + phone_number_id + "/messages",
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer '+waToken
-                            },
-                            data: {
-                                messaging_product: "whatsapp",
-                                to: from,
-                                type: "template",
-                                template: {
-                                    name: "bot_operations",
-                                    language: {
-                                        code: "en"
-                                    }
-                                }
-                            }
-                        }).catch(err => {
-                            console.log(err)
-                        })
+                        //#endregion displaying the options
                     }
-                    //#endregion displaying the options
-                }
-            }).catch((err) => {
-                console.log(err);
-            })
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }
         }
-        res.sendStatus(200);
+        return
     } else {
         res.sendStatus(404);
     }
@@ -178,22 +151,26 @@ async function handelGetUserInput(req, res) {
 function switcher(messages) {
     switch(messages){
         case '1':
-            return 'Jar Config';
+            return 'Refund Queries';
             break;
         case '2':
-            return 'Order Status';
+            return 'Order Queries';
             break;
         case '3':
-            return 'Refund/Payment help';
+            return 'Product Queries';
             break;
         case '4':
-            return 'Jar Status';
+            return 'Delivery Queries';
+            break;
         case '5':
-            return 'Track Order';
+            return 'Delivery Issues';
+            break;
         case '6':
-            return 'Delivery help';
+            return 'Discount';
+            break;
         case '7':
-            return 'Jar help';
+            return 'App Feedback';
+            break;
         default:
             return messages;
             break;
@@ -242,5 +219,54 @@ function handelGetAllNumbers(req, res) {
         }
     }).catch((err) => {
         res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"})
+    })
+}
+
+function raiseTicket(id, phone_number_id, from) {
+    let ID = id.split(':')[1]
+    let tktMessage = "Ticket for the Order : "+ID+" has been raised\nThe company will contact you within 24 hours\nThank you";
+    sendToWhatsApp(tktMessage, phone_number_id, from);
+    let time = getCurrentTimestamp();
+    sendToDB(from, Usermessage, tktMessage, time);
+}
+
+async function sendToWhatsApp(data, phone_number_id, from) {
+    await axios({
+        method: 'post',
+        url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data : {
+            messaging_product: "whatsapp",
+            to: from,
+            text: { body: data },
+        }
+    }).catch(err => {
+        console.log(err.response)
+    })
+}
+
+async function sendTemplate(phone_number_id, from) {
+    await axios({
+        method: 'post',
+        url : process.env.USER_URL + phone_number_id + "/messages",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+waToken
+        },
+        data: {
+            messaging_product: "whatsapp",
+            to: from,
+            type: "template",
+            template: {
+                name: "bot_menu",
+                language: {
+                    code: "en"
+                }
+            }
+        }
+    }).catch(err => {
+        console.log(err)
     })
 }

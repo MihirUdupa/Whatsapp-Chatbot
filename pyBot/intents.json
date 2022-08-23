@@ -71,7 +71,7 @@
                "View all options"
             ],
             "responses": [
-                "Here are the options\n1.Configuring the Jar\n2.Check the order Status\n3.Queries regarding Refunds/Payments\n4.Queries regarding Jar Status\n5.Track your order\n6.Queries regarding delivery"
+                "*Here are the options*\n\n1.Queries in refunds/payments\n\t1A.Product Expired\n\t1B.Refund Initiation\n\t1C.Refund Not Received\n\t1D.Payment Success Order Failure\n\t1E.Card Policies\n\t1F.Payment Account Changes\n\t1G.Payment Failure\n2.Queries in Order\n\t2A.Order Updates\n\t2B.How do I know if the order has been placed successfully\n\t2C.Order Cancellation\n3.Queries in Product\n\t3A.Quality Assurance\n\t3B.Product Details Query\n4.Queries in Delivery\n\t4A.Product Not Received in ETA\n\t4B.Address Change after Pickup\n5.Issue in delivered order\n\t5A.Damaged Products\n\t5B.Missing Products\n6.Queries regarding discounts & offers\n7.Feedback on app usage & concerns\n\n__Flocco Morpheus Chatbot__"
             ],
             "context": [
                 ""
@@ -81,7 +81,8 @@
             "tag": "Identity",
             "patterns": [
                 "Who are you",
-                "what are you"
+                "what are you",
+                "What is your name"
             ],
             "responses": [
                 "I am Morphius, a Deep-Learning chatbot"
@@ -111,41 +112,7 @@
             "responses":[
                 "We are sorry for your inconvinence.You can replace or return the product"
             ]
-        },
-        {
-            "tag":"product_query",
-            "patterns":[
-                "does this product have any warrenty",
-                "is the product portable",
-                "how much capacity it can hold upto"
-            ],
-            "responses":[
-                "kindly check the Product Discription"
-            ]
-        },
-        {
-            "tag": "payment_unsuccessfull",
-            "patterns": [
-                "payment was unsussessfull",
-                "payment got cancelled",
-                "couldnt pay the amount",
-                "card wasnot accepted"
-            ],
-            "responses": [
-                "check your account details and try again",
-                "Sorry for the inconvinence.try again!"
-            ]
-        },
-        {
-            "tag":"refund_queries",
-            "patterns":[
-                "when will the refund amount be inisiated",
-                "when will i get my money back"
-            ],
-            "responses":[
-                "You will be refunded with in 2-3 bussiness days."
-            ]
-        },
+        },    
         {
             "tag": "greetreply",
             "patterns": [
@@ -170,31 +137,6 @@
             ]
         },
         {
-            "tag":"product expired!",
-            "patterns":[
-                "the product is expired",
-                "expired product"
-            ],
-            "responses":[
-                "sorry for the inconvinence,you can return the product"
-            ]
-        },
-        {
-            "tag":"jar_help",
-            "patterns":[
-                "jar help",
-                "jar failture",
-                "improper reading is read in jar",
-                "weight not read properly"
-            ],
-            "responses":[
-                "Restart the jar and check",
-                "battery might be low",
-                "Change the battery and check again",
-                "shake the jar and try measuring again"
-            ]
-        },
-        {
             "tag": "answerYes",
             "patterns": [
                 "yes",
@@ -214,6 +156,294 @@
             ],
             "responses":[
                 "will raise the ticket and let the support people handel this..."
+            ]
+        },
+        {
+            "tag": "subMenu1",
+            "patterns": [
+                "Refund Queries",
+                "Refund"
+            ],
+            "responses":[
+                "1A. Product expired\n1B. Refund Initiation\n1C. Refund Not Received\n1D. Payment Success Order Failure\n1E. Card Policies\n1F. Payment Account Changes\n1G. Payment Failure"
+            ]
+        },
+
+            {
+                "tag":"product expired!",
+                "patterns":[
+                    "the product is expired",
+                    "expired product",
+                    "received expired product",
+                    "1A"
+                ],
+                "responses":[
+                    "sorry for the inconvinence, send us an email on mailto:info@flocco.co stating the problem and image of the exired product we'll verify and initiate a refund or the product will be replaced.",
+                    "send us the OrderID in the following pattern \n *Order_Id:345*\n, we'll raise a ticket and get back to you in 24 hours"
+                ]
+            },
+            {
+                "tag":"refund",
+                "patterns":[
+                    "1B.",
+                    "Time required to get my refund",
+                    "Refund Time Period"
+                ],
+                "responses":[
+                    "You will be refunded within 5-7 bussiness days."
+                ]
+            },
+            {
+                "tag": "refundInitiation",
+                "patterns": [
+                    "1C",
+                    "Refund not received",
+                    "didnt get my refund",
+                    "i wasn't able to see refund in my account even after 5-7 business days"
+                ],
+                "responses": [
+                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you",
+                    "send us the OrderID in the following pattern \n *Order_Id:345* \n, we'll raise a ticket and get back to you in 24 hours",
+                    "write to us at mailto:info@flocco.co stating the problem and with the order number"
+                ]
+            },
+            {
+                "tag": "paymentPassedOrderFail",
+                "patterns": [
+                    "payment success but order failed",
+                    "1D",
+                    "got the message from bank saying payment success but app showing payment failed",
+                    "didnt get payment acknowledgement in app"
+                ],
+                "responses": [
+                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you",
+                    "send us the OrderID in the following pattern \n *Order_Id:345* \n, we'll raise a ticket and get back to you in 24 hours",
+                    "write to us at mailto:info@flocco.co stating the problem and with the order number"
+                ]
+            },
+            {
+                "tag": "card",
+                "patterns": [
+                    "1E",
+                    "Do you guys save the card",
+                    "is my card being saved on focco servers",
+                    "do you save customers card details"
+                ],
+                "responses": [
+                    "*No*, we dont save customers card details on any of our servers"
+                ]
+            },
+            {
+                "tag": "paymentAccount",
+                "patterns": [
+                    "1F",
+                    "can i change my card or payment method at any given point of time",
+                    "can i change my prefered card or payment method at any given point of time",
+                    "Payment Account Changes"
+                ],
+                "responses": [
+                    "*yes*, you can change the payment your prefered method at any given point of time"
+                ]
+            },
+            {
+                "tag": "payment_unsuccessfull",
+                "patterns": [
+                    "payment was unsussessfull",
+                    "payment got cancelled",
+                    "couldnt pay the amount",
+                    "card wasnot accepted"
+                ],
+                "responses":[
+                    "check your account details and try again",
+                    "Sorry for the inconvinence.try again!"
+                ]
+            },
+
+        {
+            "tag": "subMenu2",
+            "patterns":[
+                "Order Queries",
+                "Queries regarding Order"
+            ],
+            "responses": [
+                "2A. Order Update\n2B. How do I know if the order has been placed successfully\n2C. Order Cancellation"
+            ]
+        },
+
+            {
+                "tag": "orderUpdates",
+                "patterns": [
+                    "2A",
+                    "Order Updates",
+                    "Can i update the order after it has been placed",
+                    "can i change the contents of the order after it has been placed"
+                ],
+                "responses": [
+                    "*No*, currently this feature is not supported",
+                    "*No*, you can't change the contents after the order is placed"
+                ]
+            },
+            {
+                "tag":"orderCheck",
+                "patterns":[
+                    "2B",
+                    "How to know if order placed successfully",
+                    "Where to track order",
+                    "What happens after order gets placed"
+                ],
+                "responses": [
+                    "Plases check the order status in Order history tab"
+                ]
+            },
+            {
+                "tag": "orderCacellation",
+                "patterns": [
+                    "Can i cancel the order right after its been packed",
+                    "can i cancel the order",
+                    "Order cancellation",
+                    "can i cancel the order after its been processed",
+                    "2C",
+                    "can i cancel the order in the delivery stage"
+                ],
+                "responses": [
+                    "*No*, Order cancellation is not supported for now",
+                    "*No*, Order can only be cancelled immediatly after placing the order"
+                ]
+            },
+
+        {
+            "tag":"subMenu3",
+            "patterns": [
+                "Product Queries",
+                "Queries related to product"
+            ],
+            "responses": [
+                "3A. Quality Assurance\n3B. Product Details Query"
+            ]
+        },
+
+            {
+                "tag": "productQuestions",
+                "patterns":[
+                    "3A",
+                    "How do i get to know the quality of the product",
+                    "how can i perform the quality check",
+                    "how can i know the product is of good quality",
+                    "how can i know if the product is up to mark"
+                ],
+                "responses": [
+                    "No need to worry about the product quality as the products will be passed through a quality check before receiving"
+                ]
+            },
+            {
+                "tag": "productDetailsQuery",
+                "patterns": [
+                    "3B",
+                    "does this product have any warrenty",
+                    "Where do i find the product manufactured date",
+                    "weight of the product"
+                ],
+                "responses":[
+                    "kindly check the Product Discription"
+                ]
+            },
+
+        {
+            "tag": "subMenu4",
+            "patterns": [
+                "Delivery Queries",
+                "Queries related to delivery"
+            ],
+            "responses": [
+                "4A. Product not received in ETA\n4B. Address Change after pickup"
+            ]
+        },
+
+            {
+                "tag": "slowDelivery",
+                "patterns": [
+                    "4A",
+                    "What to do if the product is not delivered in the given ETA"
+                ],
+                "responses": [
+                    "The order will be deliverd by the EOD",
+                    "If not received by EOD write to us at mailto:info@flocco.co"
+                ]
+            },
+            {
+                "tag": "addressChange",
+                "patterns": [
+                    "4B",
+                    "can i cahnge the address right after the order has been placed",
+                    "can i change the address when the order is on the way",
+                    "is address change supported after pickup"
+                ],
+                "responses":[
+                    "*No*, currently this feature is not supported",
+                    "*No*, you can't change the address after order's been placed/picked up"
+                ]
+            },
+
+        {
+            "tag": "subMenu5",
+            "patterns": [
+                "Delivery Issues",
+                "Issues in delivered Order"
+            ],
+            "responses": [
+                "5A. Damaged Product\n5B. Missing Products"
+            ]
+        },
+
+            {
+                "tag": "damagedProducts",
+                "patterns": [
+                    "5A",
+                    "What do i do if the product is damaged",
+                    "What do i do if i receive damaged products",
+                    "received damaged paroducts",
+                    "damaged products received",
+                    "products damaged"
+                ],
+                "responses":[
+                    "sorry for the inconvinence, send us an email on mailto:info@flocco.co stating the problem and image of the damaged product we'll verify and initiate a refund or the product will be replaced. ",
+                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you"
+                ]
+            },
+            {
+                "tag": "missingProducts",
+                "patterns":[
+                    "5B",
+                    "didn't receive some products",
+                    "some products are missing",
+                    "receive partial order",
+                    "missing products in order",
+                    "missing products"
+                ],
+                "responses": [
+                    "send us the order id, we'll raise a ticket and get back to you within 24 hrs",
+                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you"
+                ]
+            },
+
+        {
+            "tag": "subMenu6",
+            "patterns": [
+                "Discount",
+                "Queries regarding Discounts"
+            ],
+            "responses":[
+                "Please send us your query we'll get back to you in 24 hours"
+            ]
+        },
+        {
+            "tag": "subMenu7",
+            "patterns": [
+                "App Feedback",
+                "Giving app feedback"
+            ],
+            "responses": [
+                "Please send us your feedback at mailto:info@flocco.co"
             ]
         }
     ]
