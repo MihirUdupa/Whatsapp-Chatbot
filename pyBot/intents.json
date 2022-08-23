@@ -179,7 +179,7 @@
                 ],
                 "responses":[
                     "sorry for the inconvinence, send us an email on mailto:info@flocco.co stating the problem and image of the exired product we'll verify and initiate a refund or the product will be replaced.",
-                    "send us the OrderID in the following pattern \n *Order_Id:345*\n, we'll raise a ticket and get back to you in 24 hours"
+                    "send us the OrderID in the following pattern \n *Id:345*\n, we'll raise a ticket and get back to you in 24 hours"
                 ]
             },
             {
@@ -202,8 +202,8 @@
                     "i wasn't able to see refund in my account even after 5-7 business days"
                 ],
                 "responses": [
-                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you",
-                    "send us the OrderID in the following pattern \n *Order_Id:345* \n, we'll raise a ticket and get back to you in 24 hours",
+                    "Please provide us the order number like this \n*Id:345* \n, we'll verify and get back to you",
+                    "send us the OrderID in the following pattern \n *Id:345* \n, we'll raise a ticket and get back to you in 24 hours",
                     "write to us at mailto:info@flocco.co stating the problem and with the order number"
                 ]
             },
@@ -216,8 +216,8 @@
                     "didnt get payment acknowledgement in app"
                 ],
                 "responses": [
-                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you",
-                    "send us the OrderID in the following pattern \n *Order_Id:345* \n, we'll raise a ticket and get back to you in 24 hours",
+                    "Please provide us the order number like this \n*Id:345* \n, we'll verify and get back to you",
+                    "send us the OrderID in the following pattern \n *Id:345* \n, we'll raise a ticket and get back to you in 24 hours",
                     "write to us at mailto:info@flocco.co stating the problem and with the order number"
                 ]
             },
@@ -251,7 +251,8 @@
                     "payment was unsussessfull",
                     "payment got cancelled",
                     "couldnt pay the amount",
-                    "card wasnot accepted"
+                    "card wasnot accepted",
+                    "1G"
                 ],
                 "responses":[
                     "check your account details and try again",
@@ -344,7 +345,7 @@
                     "weight of the product"
                 ],
                 "responses":[
-                    "kindly check the Product Discription"
+                    "kindly check the Product Description"
                 ]
             },
 
@@ -367,7 +368,7 @@
                 ],
                 "responses": [
                     "The order will be deliverd by the EOD",
-                    "If not received by EOD write to us at mailto:info@flocco.co"
+                    "Please provide us the order number like this \n*Id:345* \n, we'll verify and get back to you"
                 ]
             },
             {
@@ -407,7 +408,7 @@
                 ],
                 "responses":[
                     "sorry for the inconvinence, send us an email on mailto:info@flocco.co stating the problem and image of the damaged product we'll verify and initiate a refund or the product will be replaced. ",
-                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you"
+                    "Please provide us the order number like this \n*Id:345* \n, we'll verify and get back to you"
                 ]
             },
             {
@@ -422,7 +423,7 @@
                 ],
                 "responses": [
                     "send us the order id, we'll raise a ticket and get back to you within 24 hrs",
-                    "Please provide us the order number like this \n*Order_Id:345* \n, we'll verify and get back to you"
+                    "Please provide us the order number like this \n*Id:345* \n, we'll verify and get back to you"
                 ]
             },
 
