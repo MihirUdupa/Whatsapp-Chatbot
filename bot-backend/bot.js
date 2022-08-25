@@ -9,8 +9,9 @@ const mongoClient = require('mongodb').MongoClient;
 const waToken = process.env.WATOKEN;
 const verify_token = process.env.VERIFY_TOKEN;
 const mongo_Uri = process.env.MONGO_URI;
-const client = new mongoClient(mongo_Uri, {useNewUrlParser: true, useUnifiedTopology: true})
-let collection
+const client = new mongoClient(mongo_Uri, {useNewUrlParser: true, useUnifiedTopology: true});
+let collection;
+let issueNumber = [];
 
 function initialize() {
     app.use(express.static('pages'));
@@ -22,7 +23,7 @@ function initialize() {
             console.log(err);
             client.close();
         } else {
-            collection = client.db("Wa_Test_Messages").collection("Whatsapp");
+            collection = client.db("Wa_Test_Messages").collection("Whatsapp"); //mongo db collection
 
             app.get('/chatbot/validation',function(req,res) {
                 handelValidation(req, res);
@@ -30,15 +31,15 @@ function initialize() {
         
             app.post('/chatbot/validation', function(req, res) {
                 handelGetUserInput(req, res);
-                res.sendStatus(200);
+                res.sendStatus(200); //sending the status to whatsapp (facebook api)
             })
 
             app.post('/chatbot/getMessage', verify ,function(req, res) {
-                handelGetAllMessages(req.body, res);
+                handelGetAllMessages(req.body, res); //secured api
             })
 
             app.get('/chatbot/getPhoneNumbers', verify ,function(req, res) {
-                handelGetAllNumbers(req, res);
+                handelGetAllNumbers(req, res); //secured api
             })       
         }
     })
@@ -49,7 +50,7 @@ app.listen(3400,function(){
     initialize();
 });
 
-async function handelValidation(req, res) {
+async function handelValidation(req, res) { //function to get the creadentials verified by the facebook servers
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
     let challenge = req.query["hub.challenge"];
@@ -68,7 +69,7 @@ async function handelValidation(req, res) {
     }
 }
 
-async function handelGetUserInput(req, res) {
+async function handelGetUserInput(req, res) { //handelling the user input i.e.: message coming from whatsapp from customers
     let body = req.body;
     
     //#region test on localhost
@@ -89,33 +90,38 @@ async function handelGetUserInput(req, res) {
 
     //#region ActualMessage
     if(body.object) {
-        let phone_number_id = ''
-        let from = ''
-        let msg_body_switcher = ''
-        let msg_body = ''
-        let type = ''
-        let data = {}
-        const pattern = /Id:/;
+        let phone_number_id = '';
+        let from = '';
+        let msg_body_switcher = '';
+        let msg_body = '';
+        let type = '';
+        let data = {};
+        const idPattern = /Id:/;
         if(body.entry && body.entry[0].changes && body.entry[0].changes[0] && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages[0]) {
             phone_number_id = req.body.entry[0].changes[0].value.metadata.phone_number_id;
             type = req.body.entry[0].changes[0].value.messages[0].type;
             from = req.body.entry[0].changes[0].value.messages[0].from;
-            if(type === "text") {
-                let Usermessage = req.body.entry[0].changes[0].value.messages[0].text.body;
-                let Botmessage = "";
-                msg_body_switcher = req.body.entry[0].changes[0].value.messages[0].text.body;
-                let time = getCurrentTimestamp();
-                sendToDB(from, Usermessage, Botmessage,time);
-                msg_body = switcher(msg_body_switcher);
-            } else if (type === "button") {
-                msg_body = req.body.entry[0].changes[0].value.messages[0].button.text;
-            }
-
-            if(msg_body.test(pattern)) {
-                raiseTicket(msg_body, phone_number_id, from)
+            let Usermessage = req.body.entry[0].changes[0].value.messages[0].text.body;
+            let Botmessage = "";
+            msg_body_switcher = req.body.entry[0].changes[0].value.messages[0].text.body;
+            let time = getCurrentTimestamp();// function call to get the timestamp for the incoming message
+            sendToDB(from, Usermessage, Botmessage,time); //function to store message in database
+            let removed = removeFromArray(from); //function call to check if the number has been removed from the array
+            if(removed) {
+                sendTemplate(phone_number_id, from, 'issue_notified'); //if the number has been removed then send the issue notified template to user
                 return
+            }
+            msg_body = switcher(msg_body_switcher); //function to get the message text by switching from use input number
+            if(idPattern.test(msg_body)) { //checking if the user has typed the above given pattern 
+                raiseTicket(msg_body, phone_number_id, from); //function call to raise the ticket
+            } else if(msg_body === '0') { //checking if user typed 0 in the message
+                sendTemplate(phone_number_id, from, 'bot_menu_1'); //function call to send the bot_menu_1 template based on user input i.e.: 0
+            } else if(msg_body === 'other') { //checking if user typed other in the message
+                sendTemplate(phone_number_id, from, 'default_issue_message_with_order_id'); // function call to send the issue template cz user pressed other (user wasnt satisfied by the issue menu)
+                issueNumber.push(from); //pushing the number to array as the user was not satisfied by the menu options
             } else {
-                data.message = msg_body
+                data.message = msg_body;
+                //sending incoming the message from whatsapp to the chatbot
                 await axios({
                     method: 'post',
                     url : process.env.URL,
@@ -123,33 +129,33 @@ async function handelGetUserInput(req, res) {
                         'Content-Type': 'application/json'
                     },
                     data : data.message
-                }).then(async (result) => {
+                }).then(async (result) => { //getting the computed result from chatbot stored in the result variable
                     if(result.data.result) {
                         let Botmessage = result.data.result;
                         let Usermessage = "";
                         let time = getCurrentTimestamp();
-                        sendToDB(from, Usermessage, Botmessage, time);
-                        await sendToWhatsApp(result.data.result, phone_number_id, from)
+                        sendToDB(from, Usermessage, Botmessage, time); //function call to store the received bot response in db
+                        await sendToWhatsApp(result.data.result, phone_number_id, from);// function call to send the bot response to whatsapp
                         //#region displaying the options
                         if(msg_body === 'hi' || msg_body === 'Hi') {
-                            await sendTemplate(phone_number_id, from)
+                            await sendTemplate(phone_number_id, from, 'bot_menu_1'); //if user sent hi then sending him the menu options
                         }
                         //#endregion displaying the options
                     }
-                }).catch((err) => {
+                }).catch((err) => { //if any error catching it and printing it in the terminal
                     console.log(err);
                 })
             }
         }
-        return
+        return //sending the status to 200 to whatsapp (facebook api)
     } else {
-        res.sendStatus(404);
+        res.sendStatus(404); //sending the failed status code to whatapp (facebook api)
     }
     //#endregion ActualMessage
 }
 
 function switcher(messages) {
-    switch(messages){
+    switch(messages){ //switching function
         case '1':
             return 'Refund Queries';
             break;
@@ -177,7 +183,7 @@ function switcher(messages) {
     }
 }
 
-function sendToDB (from, Usermessage, Botmessage, time) {
+function sendToDB (from, Usermessage, Botmessage, time) { //storing in db
     let inputData = {
         "Phone_Number" : from,
         "User_Messages": Usermessage,
@@ -191,46 +197,46 @@ function sendToDB (from, Usermessage, Botmessage, time) {
     })
 }
 
-function getCurrentTimestamp() {
+function getCurrentTimestamp() { //getting the message incommming and outgoing time from this server
     return new Date().getTime();
 }
 
-function handelGetAllMessages(number, res) {
+function handelGetAllMessages(number, res) { //api call to get all the messages stored in db
     let query = {
         "Phone_Number" : number.phone,
     }
     collection.find(query, {projection:{_id:0}}).sort({_id:-1}).toArray().then((result) => {
         if(result.length > 0) {
-            res.json({"response_desc":"Success","response_data":result,"response_code":"0"})
+            res.json({"response_desc":"Success","response_data":result,"response_code":"0"});
         } else {
-            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"})
+            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"});
         }
     }).catch((err) => {
-        res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"})
+        res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"});
     })
 }
 
-function handelGetAllNumbers(req, res) {
+function handelGetAllNumbers(req, res) { // api call to get all the phonenumbers in db
     collection.distinct("Phone_Number").then((result) => {
         if(result.length > 0) {
-            res.json({"response_desc":"Success","response_data":result,"response_code":"0"})
+            res.json({"response_desc":"Success","response_data":result,"response_code":"0"});
         } else {
-            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"})
+            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"});
         }
     }).catch((err) => {
-        res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"})
+        res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"});
     })
 }
 
-function raiseTicket(id, phone_number_id, from) {
-    let ID = id.split(':')[1]
+function raiseTicket(id, phone_number_id, from) { //function to raise the ticket
+    let ID = id.split(':')[1] //splitting the incomming message i.e.:Order_Id:<order_id> to just <order id>
     let tktMessage = "Ticket for the Order : "+ID+" has been raised\nThe company will contact you within 24 hours\nThank you";
-    sendToWhatsApp(tktMessage, phone_number_id, from);
+    sendToWhatsApp(tktMessage, phone_number_id, from); //function call to send the message to user using whatsapp
     let time = getCurrentTimestamp();
-    sendToDB(from, Usermessage, tktMessage, time);
+    sendToDB(from, Usermessage, tktMessage, time);// function call to store the result in db
 }
 
-async function sendToWhatsApp(data, phone_number_id, from) {
+async function sendToWhatsApp(data, phone_number_id, from) { //sendin to messages whatsapp 
     await axios({
         method: 'post',
         url : process.env.USER_URL + phone_number_id + "/messages?access_token=" + waToken,
@@ -243,11 +249,11 @@ async function sendToWhatsApp(data, phone_number_id, from) {
             text: { body: data },
         }
     }).catch(err => {
-        console.log(err.response)
+        console.log(err.response);
     })
 }
 
-async function sendTemplate(phone_number_id, from) {
+async function sendTemplate(phone_number_id, from, template_Name) { //sending the message template to whatsapp
     await axios({
         method: 'post',
         url : process.env.USER_URL + phone_number_id + "/messages",
@@ -260,18 +266,18 @@ async function sendTemplate(phone_number_id, from) {
             to: from,
             type: "template",
             template: {
-                name: "bot_menu",
+                name: template_Name,
                 language: {
                     code: "en"
                 }
             }
         }
     }).catch(err => {
-        console.log(err)
+        console.log(err);
     })
 }
 
-function verify (req, res, next) {
+function verify (req, res, next) { //verifying the request comping from hubble only basically api security
     let address = process.env.HUBBLE;
     let ip = req.headers["x-real-ip"];
 
@@ -281,5 +287,16 @@ function verify (req, res, next) {
         res.setHeader('content-type', 'Application/json');
         res.statusCode = 403;
         res.json({ "response_desc": "Unauthorized" });
+    }
+}
+
+function removeFromArray(number) { //removing the number from array whose issue has been notified
+    for(let i=0;i<issueNumber.length;i++){
+        if(number === issueNumber[i]){
+            issueNumber.pop(number);
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
