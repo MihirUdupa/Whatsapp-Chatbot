@@ -32,14 +32,14 @@ function initialize() {
                 handelGetUserInput(req, res);
                 res.sendStatus(200);
             })
-        
-            app.post('/chatbot/getMessage', function(req, res) {
+
+            app.post('/chatbot/getMessage', verify ,function(req, res) {
                 handelGetAllMessages(req.body, res);
             })
 
-            app.get('/chatbot/getPhoneNumbers', function(req, res) {
+            app.get('/chatbot/getPhoneNumbers', verify ,function(req, res) {
                 handelGetAllNumbers(req, res);
-            })
+            })       
         }
     })
 }
@@ -269,4 +269,17 @@ async function sendTemplate(phone_number_id, from) {
     }).catch(err => {
         console.log(err)
     })
+}
+
+function verify (req, res, next) {
+    let address = process.env.HUBBLE;
+    let ip = req.headers["x-real-ip"];
+
+    if(ip === address) {
+        next()
+    } else {
+        res.setHeader('content-type', 'Application/json');
+        res.statusCode = 403;
+        res.json({ "response_desc": "Unauthorized" });
+    }
 }
