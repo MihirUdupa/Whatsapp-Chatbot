@@ -289,10 +289,10 @@ async function sendTemplate(phone_number_id, from, template_Name) { //sending th
 }
 
 function verify (req, res, next) { //verifying the request coming from hubble only basically api security
-    let address = process.env.HUBBLE;
+    let address = process.env.HUBBLE.split(",");
     let ip = req.headers["x-real-ip"];
 
-    if(ip === address) {
+    if(address.includes(ip)) {
         next()
     } else {
         res.setHeader('content-type', 'Application/json');
