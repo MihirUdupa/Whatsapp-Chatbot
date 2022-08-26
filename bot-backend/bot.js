@@ -127,7 +127,7 @@ async function handelGetUserInput(req, res) { //handelling the user input i.e.: 
                 raiseTicket(msg_body, phone_number_id, from); //function call to raise the ticket
             } else if(msg_body === '0') { //checking if user typed 0 in the message
                 sendTemplate(phone_number_id, from, 'bot_menu_1'); //function call to send the bot_menu_1 template based on user input i.e.: 0
-            } else if(msg_body === 'other') { //checking if user typed other in the message
+            } else if(msg_body.toLowerCase() === 'other') { //checking if user typed other in the message
                 sendTemplate(phone_number_id, from, 'default_issue_message_with_order_id'); // function call to send the issue template cz user pressed other (user wasnt satisfied by the issue menu)
                 issueNumber.push(from); //pushing the number to array as the user was not satisfied by the menu options
             } else {
@@ -180,7 +180,7 @@ function switcher(messages) {
             return 'Feedback'
             break;
         case '5':
-            return 'Disount'
+            return 'Discount'
             break;
         case '6':
             return 'Account'
