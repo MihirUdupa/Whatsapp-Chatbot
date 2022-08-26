@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios')
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { default: rateLimit } = require('express-rate-limit');
 require('dotenv').config();
 const app = express();
 const mongoClient = require('mongodb').MongoClient;
@@ -18,13 +19,23 @@ function initialize() {
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(bodyParser.json());
     app.use(cors());
+    //using api limiter
+    const limiter = rateLimit({
+        windowMs: 1 * 60 * 1000, //1 minute window
+        max: process.env.API_LIMITER, //start blocking after 3 requests
+        message:{
+            status: 429,
+            message: "Too Many Requests"
+        }
+    })
+
     client.connect(err => {
         if(err) {
             console.log(err);
             client.close();
         } else {
             collection = client.db("Wa_Test_Messages").collection("Whatsapp"); //mongo db collection
-
+            console.log('Connected to Mongo DB')
             app.get('/chatbot/validation',function(req,res) {
                 handelValidation(req, res);
             });
@@ -34,11 +45,11 @@ function initialize() {
                 res.sendStatus(200); //sending the status to whatsapp (facebook api)
             })
 
-            app.post('/chatbot/getMessage', verify ,function(req, res) {
+            app.post('/chatbot/getMessage', limiter, verify, function(req, res) {
                 handelGetAllMessages(req.body, res); //secured api
             })
 
-            app.get('/chatbot/getPhoneNumbers', verify ,function(req, res) {
+            app.get('/chatbot/getPhoneNumbers', limiter, verify, function(req, res) {
                 handelGetAllNumbers(req, res); //secured api
             })       
         }
@@ -155,27 +166,27 @@ async function handelGetUserInput(req, res) { //handelling the user input i.e.: 
 }
 
 function switcher(messages) {
-    switch(messages){ //switching function
+    switch(messages) {
         case '1':
-            return 'Refund Queries';
+            return 'About Flocco';
             break;
         case '2':
-            return 'Order Queries';
+            return 'Order';
             break;
         case '3':
-            return 'Product Queries';
+            return 'Payment';
             break;
         case '4':
-            return 'Delivery Queries';
+            return 'Feedback'
             break;
         case '5':
-            return 'Delivery Issues';
+            return 'Disount'
             break;
         case '6':
-            return 'Discount';
+            return 'Account'
             break;
         case '7':
-            return 'App Feedback';
+            return 'App'
             break;
         default:
             return messages;
@@ -277,7 +288,7 @@ async function sendTemplate(phone_number_id, from, template_Name) { //sending th
     })
 }
 
-function verify (req, res, next) { //verifying the request comping from hubble only basically api security
+function verify (req, res, next) { //verifying the request coming from hubble only basically api security
     let address = process.env.HUBBLE;
     let ip = req.headers["x-real-ip"];
 
