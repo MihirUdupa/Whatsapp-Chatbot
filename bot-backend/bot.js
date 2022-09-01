@@ -11,7 +11,7 @@ const waToken = process.env.WATOKEN;
 const verify_token = process.env.VERIFY_TOKEN;
 const mongo_Uri = process.env.MONGO_URI;
 const client = new mongoClient(mongo_Uri, {useNewUrlParser: true, useUnifiedTopology: true});
-let collection;
+let collection, collection1;
 let issueNumber = [];
 
 function initialize() {
@@ -34,7 +34,8 @@ function initialize() {
             console.log(err);
             client.close();
         } else {
-            collection = client.db("Wa_Test_Messages").collection("Whatsapp"); //mongo db collection
+            collection = client.db("Whatsapp").collection("Whatsapp_Messages"); //mongo db collection
+            collection1 = client.db("Whatsapp").collection("Whatsapp_Agent_Replies");//mongo db collection for agent replies
             console.log('Connected to Mongo DB')
             app.get('/chatbot/validation',function(req,res) {
                 handelValidation(req, res);
@@ -51,7 +52,11 @@ function initialize() {
 
             app.get('/chatbot/getPhoneNumbers', limiter, verify, function(req, res) {
                 handelGetAllNumbers(req, res); //secured api
-            })       
+            })
+            
+            app.get('/chatbot/getCurrentPhoneNumber', limiter, verify, function(req, res) {
+                handelGetCurrentNumber(req,res); //secured api
+            })
         }
     })
 }
@@ -130,6 +135,7 @@ async function handelGetUserInput(req, res) { //handelling the user input i.e.: 
             } else if(msg_body.toLowerCase() === 'other') { //checking if user typed other in the message
                 sendTemplate(phone_number_id, from, 'default_issue_message_with_order_id'); // function call to send the issue template cz user pressed other (user wasnt satisfied by the issue menu)
                 issueNumber.push(from); //pushing the number to array as the user was not satisfied by the menu options
+                storeNumberInDB(from); //storing the nmber in db so that it can be viewed on frontend (custom frontend)
             } else {
                 data.message = msg_body;
                 //sending incoming the message from whatsapp to the chatbot
@@ -208,6 +214,19 @@ function sendToDB (from, Usermessage, Botmessage, time) { //storing in db
     })
 }
 
+function storeNumberInDB (from) {
+    let inputData = {
+        "Phone_Number": from,
+        "Ticket_Id": "",
+        "Issue_Status": "Open",
+    }
+    collection.insertOne(inputData).then((result) => {
+        console.log(result);
+    }).catch((err) => {
+        console.log(err);
+    })
+}
+
 function getCurrentTimestamp() { //getting the message incommming and outgoing time from this server
     return new Date().getTime();
 }
@@ -236,6 +255,18 @@ function handelGetAllNumbers(req, res) { // api call to get all the phonenumbers
         }
     }).catch((err) => {
         res.json({"response_desc":"Internal Server Error","response_data":err,"response_code":"500"});
+    })
+}
+
+function handelGetCurrentNumber(req, res) {
+    collection.find("Phone_Number").then((result) => {
+        if(result.length > 0) {
+            res.json({"response_desc":"Success","response_data":result,"response_code":"0"});
+        } else {
+            res.json({"response_desc":"Failure","response_data":{},"response_code":"1"});
+        }
+    }).catch((err) => {
+        res.json({"response_desc":"Internal Server Error","reponse_data":err,"response_code":"500"});
     })
 }
 
