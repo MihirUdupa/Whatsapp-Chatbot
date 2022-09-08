@@ -17,6 +17,7 @@ Go and modify the intents.json file
     2. Use the <cmd> npm install </cmd> to install the node modules
     3. Run the bot.js file either by using <cmd> pm2 start bot.js </cmd> or <cmd> node bot.js </cmd>
 2. Python Packages
-    1. Install tensorflow, nltk, keras
+    1. Install tensorflow, nltk, nltk popular packages, keras and flask
     2. Head to the pyBot directory
-    3. Run the pyServer.py file either by using <cmd> pm2 start pyServer.py </cmd> or <cmd> python3 pyServer.py </cmd>
+    3. Train the using the train_chatbot.py
+    4. Run the pyServer.py file either by using <cmd> pm2 start pyServer.py </cmd> or <cmd> python3 pyServer.py </cmd>
