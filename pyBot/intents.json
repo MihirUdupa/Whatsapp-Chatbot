@@ -6,46 +6,7 @@
                 "Hi"
             ],
             "responses": [
-                "Hello \nMy name is Flocco, How can I help you today",
-                "Good to see you\nMy name is Flocco, I'm here to help you",
-                "Ahoy! mate, Flocco here \nHow can I be of service to you"
-            ],
-            "context": [
-                ""
-            ]
-        },
-        {
-            "tag": "goodbye",
-            "patterns": [
-                "Bye",
-                "See you later",
-                "Goodbye",
-                "Get lost",
-                "Till next time",
-                "bbye"
-            ],
-            "responses": [
-                "See you!",
-                "Have a nice day",
-                "Bye! Come back again soon."
-            ],
-            "context": [
-                ""
-            ]
-        },
-        {
-            "tag": "thanks",
-            "patterns": [
-                "Thanks",
-                "Thank you",
-                "That's helpful",
-                "Awesome, thanks",
-                "Thanks for helping me"
-            ],
-            "responses": [
-                "Happy to help!",
-                "Any time!",
-                "My pleasure"
+                "Hello! This is Flocco here and I'm here to help you today!"
             ],
             "context": [
                 ""
@@ -88,31 +49,6 @@
             ]
         },
         {
-            "tag":"Positive_Response",
-            "patterns":[
-                "i loved it!",
-                "nice product.",
-                "best product",
-                "worth buying the product",
-                "product quality is amazing"
-            ],
-            "responses":[
-                "Thank you for your purchase!It would be a great help if you provide a review for our product and rate it"
-            ]
-        },
-        {
-            "tag":"Negetive_Response",
-            "patterns":[
-                "i didnt like the product!",
-                "worst product.",
-                "product quality isnt upto mark ",
-                "product is damaged"
-            ],
-            "responses":[
-                "We are sorry for your inconvinence.You can replace or return the product"
-            ]
-        },    
-        {
             "tag": "greetreply",
             "patterns": [
                 "i am good",
@@ -126,45 +62,13 @@
             ]
         },
         {
-            "tag": "success",
-            "patterns": [
-                "Did that",
-                "done"
-            ],
-            "responses": [
-                "did the solution work ?"
-            ]
-        },
-        {
-            "tag": "answerYes",
-            "patterns": [
-                "yes",
-                "worked"
-            ],
-            "responses": [
-                "happy to help you :)"
-            ]
-        },
-        {
-            "tag": "answerNo",
-            "patterns":[
-                "no",
-                "nope",
-                "nah",
-                "nuh uh"
-            ],
-            "responses":[
-                "will raise the ticket and let the support people handel this..."
-            ]
-        },
-        {
             "tag": "subMenu1",
             "patterns": [
                 "About Flocco",
                 "Flocco"
             ],
             "responses":[
-                "1a.Where am I getting my groceries from?\n1b.How do I contact Flocco customer care?\n1c.Do you charge a commission from the Kirana stores?\n1d.How do you pay your riders?\n1e.Which cities are Flocco operating in?\n1f.What if I want to order from Flocco if they have not expanded to my location yet?\n\nType from *1a* to *1f* for relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "1a.Where am I getting my groceries from?\n\n1b.How do I contact Flocco customer care?\n\n1c.Do you charge a commission from the Kirana stores?\n\n1d.How do you pay your riders?\n\n1e.Which cities are Flocco operating in?\n\n1f.What if I want to order from Flocco if they have not expanded to my location yet?\n\nType from *1a* to *1f* to view relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
         },
 
@@ -242,7 +146,7 @@
                 "Order"
             ],
             "responses": [
-                "2a.Can I edit my order?\n2b.How do I cancel my order?\n2c.Is Flocco accountable for the quality of the groceries received?\n2d.Is there a minimum order value?\n2e.What are your delivery charges\n2f.What if the kirana does not hold brands that I prefer to order?\n2g.What if I placed a wrong order?\n2h.Do you deliver bulk orders?\n2i.Can I schedule a delivery?\n2j.What do you mean by ‘your location is not serviceable’?\n\nType from *2a to 2j* for relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "2a.Can I edit my order?\n\n2b.How do I cancel my order?\n\n2c.Is Flocco accountable for the quality of the groceries received?\n\n2d.Is there a minimum order value?\n\n2e.What are your delivery charges\n\n2f.What if the kirana does not hold brands that I prefer to order?\n\n2g.What if I placed a wrong order?\n\n2h.Do you deliver bulk orders?\n\n2i.Can I schedule a delivery?\n\n2j.What do you mean by ‘your location is not serviceable’?\n\nType from *2a to 2j* to view relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
         },
 
@@ -363,7 +267,7 @@
                 "Payment"
             ],
             "responses": [
-                "3a.How do I get a refund?\n3b.Do I get a refund if some of the items in my order are delivered wrong?\n3c.Why has my payment been declined?\n\nType from *3a* to *3c* for relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "3a.How do I get a refund?\n\n3b.Do I get a refund if some of the items in my order are delivered wrong?\n\n3c.Why has my payment been declined?\n\nType from *3a* to *3c* to view relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
         },
 
@@ -408,7 +312,7 @@
                 "Feedback"
             ],
             "responses": [
-                "4a.Where can I submit feedback about Flocco?\n\nType *4a* for relevant answer\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "4a.Where can I submit feedback about Flocco?\n\nType *4a* to view relevant answer\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
         },
 
@@ -423,7 +327,7 @@
                     "Your feedback is always welcome and you may submit the same by writing to us on info@flocco.co or visiting our website www.flocco.co for further information. Alternatively, please tell us more about your feedback by typing *Other* in this chat window."
                 ]
             },
-        
+
         {
             "tag": "subMenu5",
             "patterns": [
@@ -431,7 +335,7 @@
                 "Discount"
             ],
             "responses": [
-                "5a.Does Flocco offer any discounts?\n\nType *5a* for relevant answer\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "5a.Does Flocco offer any discounts?\n\nType *5a* to view relevant answer\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
         },
 
@@ -453,10 +357,10 @@
                 "Account"
             ],
             "responses":[
-                "6a.Is registration mandatory to place an order?\n6b.Once registered, can I edit my personal information?\n6c.How can I deactivate my Flocco account?\n6d.What are the various payment options available?\n6e.Can I set more than one delivery address on the application?\n6f.Is my personal data and information safe with Flocco?\n\nType from *6a* to *6f* for relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "6a.Is registration mandatory to place an order?\n\n6b.Once registered, can I edit my personal information?\n\n6c.How can I deactivate my Flocco account?\n\n6d.What are the various payment options available?\n\n6e.Can I set more than one delivery address on the application?\n\n6f.Is my personal data and information safe with Flocco?\n\nType from *6a* to *6f* to view relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
-        },  
-        
+        },
+
         {
             "tag": "registration",
             "patterns": [
@@ -524,7 +428,7 @@
             "responses":[
                 "All personal information and data will be safe with Flocco, bound by the data policy. We urge you to check the Terms & Conditions for more details regarding this."
             ]
-        },           
+        },
 
 
         {
@@ -534,7 +438,7 @@
                 "App"
             ],
             "responses": [
-                "7a.What is 'Recommended List' and how can I make use of this feature?\n7b.What is 'My List' and how can I leverage this feature?\n\nType from *7a* to *7b* for relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
+                "7a.What is 'Recommended List' and how can I make use of this feature?\n\n7b.What is 'My List' and how can I leverage this feature?\n\nType from *7a* to *7b* to view relevant answers\nType *Other* if your issue is not listed\nType *0* for main menu"
             ]
         },
 
@@ -549,7 +453,7 @@
             "responses":[
                 "This is a curated list of products recommended by Flocco for you, that can be modified and added to your shopping list."
             ]
-        },   
+        },
         {
             "tag": "list",
             "patterns": [
@@ -560,6 +464,6 @@
             "responses":[
                 "'My List' allows you to create a list of products that you commonly order on a regular basis. Multiple such lists can be created and tagged with an appropriate name as per your choice that allows you to check-out in once click."
             ]
-        }  
+        }
     ]
 }
